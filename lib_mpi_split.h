@@ -67,13 +67,18 @@ inline MPI_Comm mpi_split_by_app( int argc=0, char **argv=NULL )
 	}
 	void* v;
 	int flag;
-	MPI_Comm_get_attr(MPI_COMM_WORLD,MPI_APPNUM,&v,&flag);
-	int appnum = *(int*)v;
-	int rank;
-	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
-	MPI_Comm domain;
-	MPI_Comm_split(MPI_COMM_WORLD,appnum,rank,&domain);
-	return domain;
+	MPI_Comm_get_attr(MPI_COMM_WORLD, MPI_APPNUM, &v, &flag);
+
+	if (flag) {
+		int appnum = *(int*)v;
+		int rank;
+		MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+		MPI_Comm domain;
+		MPI_Comm_split(MPI_COMM_WORLD,appnum,rank,&domain);
+		return domain;
+	} else {
+		return MPI_COMM_WORLD;
+	}
 }
 
 }
